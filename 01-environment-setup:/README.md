@@ -57,7 +57,7 @@ under Forward Lookup Zones with SOA and NS records present.
 Active Directory is heavily dependent on DNS. Verifying this early 
 prevents harder to diagnose problems later.
 
-![DNS Manager showing lab.local](../screenshots/verify-dns.png)
+![DNS Manager showing lab.local](screenshots/verify-dns.png)
 
 ---
 
@@ -102,7 +102,7 @@ ipconfig /all
 ```
 Confirmed the DNS server line showed the domain controller's private IP.
 
-![ipconfig /all showing DC IP as DNS server](../screenshots/client-ipconfig-dns.png)
+![ipconfig /all showing DC IP as DNS server](screenshots/client-ipconfig-dns.png)
 
 ---
 
@@ -123,7 +123,7 @@ appeared in the Computers container.
 Get-ADComputer -Filter * | Select Name
 ```
 
-![ADUC Computers container showing client VM](../screenshots/aduc-computers-client.png)
+![ADUC Computers container showing client VM](screenshots/aduc-computers-client.png)
 
 ---
 
@@ -149,7 +149,7 @@ echo %logonserver%
 systeminfo | findstr /i "domain"
 ```
 
-![whoami and logonserver output confirming domain login](../screenshots/client-domain-login-confirm.png)
+![whoami and logonserver output confirming domain login](screenshots/client-domain-login-confirm.png)
 
 **Troubleshooting note:** Domain users do not have Remote Desktop 
 access by default. Had to explicitly grant RDP permissions to the 
