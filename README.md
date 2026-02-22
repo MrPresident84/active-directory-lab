@@ -3,7 +3,7 @@
 ## Objective
 Deploy and configure an Active Directory environment in Microsoft Azure to
 simulate real-world enterprise identity management. Perform common help desk
-and sysadmin tasks using both the GUI and PowerShell, demonstrating hands-on
+and sysadmin tasks using PowerShell, demonstrating hands-on
 proficiency with the tools and workflows used daily in IT support roles.
 
 ## Tools & Technologies Used
@@ -287,15 +287,15 @@ Get-ADUser -Identity cnylund `
 
 ## Key Concepts Demonstrated
 
-| Task                | GUI | PowerShell | Real-World Use Case                        |
-|---------------------|-----|------------|--------------------------------------------|
-| User Onboarding     | ✅  | ✅         | New employee account provisioning          |
-| Password Reset      | ✅  | ✅         | Most common Tier 1 help desk ticket        |
-| Account Unlock      | ✅  | ✅         | Lockout after failed login attempts        |
-| Group Management    | ✅  | ✅         | Granting and revoking resource access      |
-| OU Management       | ✅  | ✅         | Department transfers, reorganization       |
-| Service Account     | ✅  | ✅         | Running services under controlled identity |
-| User Offboarding    | ✅  | ✅         | Secure departure process                   |
+| Task                | PowerShell | Real-World Use Case                       |
+|---------------------|-------------------------------------------------------------|
+| User Onboarding     | ✅         | New employee account provisioning          |
+| Password Reset      | ✅         | Most common Tier 1 help desk ticket        |
+| Account Unlock      | ✅         | Lockout after failed login attempts        |
+| Group Management    | ✅         | Granting and revoking resource access      |
+| OU Management       | ✅         | Department transfers, reorganization       |
+| Service Account     | ✅         | Running services under controlled identity |
+| User Offboarding    | ✅         | Secure departure process                   |
 
 ---
 
