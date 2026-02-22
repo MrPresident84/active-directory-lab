@@ -216,9 +216,9 @@ Get-ADUser -Identity "svc-kitchen" `
 Simulated the full employee lifecycle — onboarding a new arrival and properly
 offboarding a departed user following security best practices.
 
-### Onboarding — Mel Bushman
+### Onboarding — Miles Webber
 
-**Scenario:** Dorothy's new boyfriend Mel Bushman is now officially part of
+**Scenario:** Rose's new boyfriend Mel Bushman is now officially part of
 the picture and needs an account created with proper group membership and
 placement in the GuestCharacters OU.
 
