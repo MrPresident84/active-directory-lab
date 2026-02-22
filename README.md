@@ -229,23 +229,21 @@ set temporary password → check "User must change password at next logon"
 **PowerShell Method:**
 ```powershell
 New-ADUser `
-  -Name "Mel Bushman" `
-  -GivenName "Mel" `
-  -Surname "Bushman" `
-  -SamAccountName "mbushman" `
-  -UserPrincipalName "mbushman@lab.local" `
+  -Name "Miles Webber" `
+  -GivenName "Miles" `
+  -Surname "Webber" `
+  -SamAccountName "mwebber" `
+  -UserPrincipalName "mwebber@lab.local" `
   -Path "OU=GuestCharacters,OU=GoldenGirls,DC=lab,DC=local" `
   -AccountPassword (ConvertTo-SecureString "Welcome123!" -AsPlainText -Force) `
   -ChangePasswordAtLogon $true `
   -Enabled $true `
-  -Description "Dorothy's boyfriend"
+  -Description "Rose's Boyfriend"
 
 # Add to appropriate groups
 Add-ADGroupMember -Identity "GuestCharacters" -Members mbushman
 ```
-
-![New User Created GUI](05-onboarding-offboarding/screenshots/01-new-user-gui.png)
-![New User Created PowerShell](05-onboarding-offboarding/screenshots/02-new-user-powershell.png)
+![New User Created PowerShell](05-onboarding-offboarding/screenshots/01-new-user-powershell.png)
 
 ---
 
@@ -282,9 +280,8 @@ Get-ADUser -Identity cnylund `
   Select Name, Enabled, DistinguishedName
 ```
 
-![Offboarding Disabled GUI](05-onboarding-offboarding/screenshots/03-offboarding-disabled-gui.png)
-![Offboarding PowerShell](05-onboarding-offboarding/screenshots/04-offboarding-powershell.png)
-![Charlie Nylund in DisabledAccounts OU](05-onboarding-offboarding/screenshots/05-user-in-disabled-ou.png)
+![Offboarding PowerShell](05-onboarding-offboarding/screenshots/02-offboarding-powershell.png)
+
 
 ---
 
