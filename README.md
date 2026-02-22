@@ -218,7 +218,7 @@ offboarding a departed user following security best practices.
 
 ### Onboarding — Miles Webber
 
-**Scenario:** Rose's new boyfriend Mel Bushman is now officially part of
+**Scenario:** Rose's new boyfriend Miles Webber is now officially part of
 the picture and needs an account created with proper group membership and
 placement in the GuestCharacters OU.
 
@@ -241,7 +241,7 @@ New-ADUser `
   -Description "Rose's Boyfriend"
 
 # Add to appropriate groups
-Add-ADGroupMember -Identity "GuestCharacters" -Members mbushman
+Add-ADGroupMember -Identity "GuestCharacters" -Members mwebber
 ```
 ![New User Created PowerShell](05-onboarding-offboarding/screenshots/01-new-user-powershell.png)
 
