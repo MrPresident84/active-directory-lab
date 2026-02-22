@@ -171,7 +171,7 @@ Unlock-ADAccount -Identity dzbornak
 # Verify account is unlocked
 Get-ADUser -Identity dzbornak -Properties LockedOut | Select Name, LockedOut
 ```
-![Account Unlocked PowerShell](02-account-management/screenshots/04-account-unlocked-powershell.png)
+![Account Unlocked PowerShell](02-account-management/screenshots/02-account-unlocked-powershell.png)
 ---
 
 ## Part 4 — Service Accounts
