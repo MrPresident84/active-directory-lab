@@ -22,6 +22,13 @@ and onboarding and offboarding users. This lab demonstrates hands-on
 proficiency with these core responsibilities in a simulated enterprise
 environment.
 
+## Lab Theme
+To make this lab more engaging and memorable, the environment was built around
+the cast and characters of The Golden Girls. The domain `lab.local` represents
+the household, with Organizational Units organized by each character's role and
+relationship to the house. Real cast members were added as users with
+descriptions noting their roles on the show.
+
 ## Repository Structure
 ```
 active-directory-lab/
@@ -70,58 +77,57 @@ successful domain login was performed on the client machine.
 
 ---
 
-## Part 2 — OU, Groups, and User Management
+## Part 2 — OU Structure, Groups, and User Management
 
-Created an Organizational Unit (OU) structure to mirror a real enterprise
-directory. Managed group memberships and moved user objects between OUs
-to simulate department transfers and reorganization.
+Created an Organizational Unit structure to mirror a real enterprise directory,
+organized around the Golden Girls household. Managed group memberships and
+moved user objects between OUs to simulate real-world access changes and
+department transfers.
 
-**Created OUs:**
-- Employees
-- IT Department
-- Service Accounts
-- Disabled Users
+**OU Structure:**
+- `GoldenGirls` — top level OU containing all sub-OUs
+  - `Family` — main household members
+  - `GuestCharacters` — recurring guest cast
+  - `Residents` — residents of the household
+  - `ServiceAccounts` — service and admin accounts
+  - `DisabledAccounts` — offboarded or inactive users
 
-**GUI Method — Create OU:**
-ADUC → right click domain → New → Organizational Unit → name it
+### Add User to Group
 
-**PowerShell Method — Create OU:**
+**Scenario:** Cesar Romero's character Tony has become a regular presence in
+the house and needs to be added to the Residents group to gain access to shared
+household resources.
+
+**GUI Method:**
+ADUC → find Cesar Romero → right click → Add to a group → type Residents → OK
+
+**PowerShell Method:**
 ```powershell
-New-ADOrganizationalUnit -Name "IT Department" -Path "DC=lab,DC=local"
-```
+Add-ADGroupMember -Identity "Residents" -Members cromero
 
-**Add User to Group:**
-
-GUI: ADUC → find user → right click → Add to a group → type group name → OK
-
-PowerShell:
-```powershell
-Add-ADGroupMember -Identity "IT Support" -Members "jsmith"
-```
-
-Verified group membership:
-```powershell
-Get-ADGroupMember -Identity "IT Support" | Select Name
-```
-
-**Move Object to Different OU:**
-
-GUI: ADUC → find user → right click → Move → select destination OU → OK
-
-PowerShell:
-```powershell
-Move-ADObject `
-  -Identity "CN=John Smith,OU=Employees,DC=lab,DC=local" `
-  -TargetPath "OU=IT Department,DC=lab,DC=local"
+# Verify group membership
+Get-ADGroupMember -Identity "Residents" | Select Name
 ```
 
 ![OU Structure](02-ou-groups-users/screenshots/01-ou-structure.png)
-![Add User to Group GUI](02-ou-groups-users/screenshots/02-add-to-group-gui.png)
-![Add User to Group PowerShell](02-ou-groups-users/screenshots/03-add-to-group-powershell.png)
-![Move Object GUI](02-ou-groups-users/screenshots/04-move-object-gui.png)
-![Move Object PowerShell](02-ou-groups-users/screenshots/05-move-object-powershell.png)
+![Add User to Group PowerShell](02-ou-groups-users/screenshots/02-add-to-group-powershell.png)
 
 ---
+### Move Object to Different OU
+
+**Scenario:** Stan Zbornak started as a GuestCharacter but has been around so
+much he needs to be moved to the Family OU — very on brand for Stan.
+
+**GUI Method:**
+ADUC → find Stan Zbornak → right click → Move → select Family OU → OK
+
+**PowerShell Method:**
+```powershell
+Move-ADObject `
+  -Identity "CN=Stan Zbornak,OU=GuestCharacters,OU=GoldenGirls,DC=lab,DC=local" `
+  -TargetPath "OU=Family,OU=GoldenGirls,DC=lab,DC=local"
+```
+![Move Object PowerShell](02-ou-groups-users/screenshots/03-move-object-powershell.png)
 
 ## Part 3 — Account Management
 
@@ -130,97 +136,112 @@ password resets and account unlocks — using both the GUI and PowerShell.
 
 ### Password Reset
 
+**Scenario:** Blanche Devereaux called the help desk saying she cannot log in.
+With too many admirers calling she lost track of her password.
+
 **GUI Method:**
-ADUC → find user → right click → Reset Password → set temporary password →
-check "User must change password at next logon"
+ADUC → find Blanche Devereaux → right click → Reset Password → set temporary
+password → check "User must change password at next logon"
 
 **PowerShell Method:**
 ```powershell
-Set-ADAccountPassword -Identity "jsmith" `
-  -NewPassword (ConvertTo-SecureString "NewTemp456!" -AsPlainText -Force) `
-  -Reset
+Set-ADAccountPassword -Identity bdevereaux `
+  -Reset `
+  -NewPassword (ConvertTo-SecureString "NewPass123!" -AsPlainText -Force)
 
-Set-ADUser -Identity "jsmith" -ChangePasswordAtLogon $true
+Set-ADUser -Identity bdevereaux -ChangePasswordAtLogon $true
 ```
-
-![Password Reset GUI](03-account-management/screenshots/01-password-reset-gui.png)
-![Password Reset PowerShell](03-account-management/screenshots/02-password-reset-powershell.png)
+![Password Reset PowerShell](03-account-management/screenshots/01-password-reset-powershell.png)
 
 ---
 
 ### Account Unlock
 
+**Scenario:** Dorothy Zbornak tried logging in too many times with the wrong
+password after forgetting it and locked herself out — stubborn to the end.
+
 **GUI Method:**
-ADUC → find user → right click → Properties → Account tab →
+ADUC → find Dorothy Zbornak → right click → Properties → Account tab →
 check "Unlock account"
 
 **PowerShell Method:**
 ```powershell
-Unlock-ADAccount -Identity "jsmith"
+Unlock-ADAccount -Identity dzbornak
+
+# Verify account is unlocked
+Get-ADUser -Identity dzbornak -Properties LockedOut | Select Name, LockedOut
 ```
-
-Verified the account was unlocked:
-```powershell
-Get-ADUser -Identity "jsmith" -Properties LockedOut | Select Name, LockedOut
-```
-
-![Account Unlocked GUI](03-account-management/screenshots/03-account-unlocked-gui.png)
-![Account Unlocked PowerShell](03-account-management/screenshots/04-account-unlocked-powershell.png)
-
+![Account Unlocked PowerShell](02-account-management/screenshots/04-account-unlocked-powershell.png)
 ---
 
 ## Part 4 — Service Accounts
 
-Created a dedicated service account used to run applications or services
-under a controlled identity rather than a regular user account — a common
-security best practice in enterprise environments.
+Created a dedicated service account to run an automated task — a scheduled
+backup of the household recipe database. Service accounts use a controlled
+identity separate from regular user accounts and are configured so the password
+never expires and cannot be changed, preventing service interruptions.
+
+**Why configure it this way:** A service running unattended would break if the
+password changed or expired. These settings ensure continuity while keeping the
+account separate from regular user accounts for security and auditing purposes.
 
 **GUI Method:**
-ADUC → right click Service Accounts OU → New → User → name with svc- prefix →
+ADUC → right click ServiceAccounts OU → New → User → name svc-kitchen →
 set password → uncheck "User must change password" → check "Password never expires"
 
 **PowerShell Method:**
 ```powershell
 New-ADUser `
-  -Name "svc-Helpdesk" `
-  -SamAccountName "svc-Helpdesk" `
-  -UserPrincipalName "svc-Helpdesk@lab.local" `
-  -Path "OU=Service Accounts,DC=lab,DC=local" `
-  -AccountPassword (ConvertTo-SecureString "ServicePass123!" -AsPlainText -Force) `
+  -Name "svc-kitchen" `
+  -SamAccountName "svc-kitchen" `
+  -UserPrincipalName "svc-kitchen@lab.local" `
+  -Path "OU=ServiceAccounts,OU=GoldenGirls,DC=lab,DC=local" `
+  -AccountPassword (ConvertTo-SecureString "SecurePass123!" -AsPlainText -Force) `
   -PasswordNeverExpires $true `
   -CannotChangePassword $true `
-  -Enabled $true
-```
+  -Enabled $true `
+  -Description "Service account for automated kitchen inventory backup"
 
-![Service Account Created GUI](04-service-accounts/screenshots/01-service-account-gui.png)
-![Service Account Created PowerShell](04-service-accounts/screenshots/02-service-account-powershell.png)
+# Verify service account configuration
+Get-ADUser -Identity "svc-kitchen" `
+  -Properties PasswordNeverExpires, CannotChangePassword, Enabled, Description, DistinguishedName |
+  Select Name, Enabled, PasswordNeverExpires, CannotChangePassword, Description, DistinguishedName
+```
+![Service Account Created PowerShell](04-service-accounts/screenshots/01-service-account-powershell.png)
 
 ---
 
 ## Part 5 — Onboarding and Offboarding
 
-Simulated the full employee lifecycle — creating a new user account during
-onboarding and securely disabling and archiving the account during offboarding
-following security best practices.
+Simulated the full employee lifecycle — onboarding a new arrival and properly
+offboarding a departed user following security best practices.
 
-### Onboarding — Create New User
+### Onboarding — Mel Bushman
+
+**Scenario:** Dorothy's new boyfriend Mel Bushman is now officially part of
+the picture and needs an account created with proper group membership and
+placement in the GuestCharacters OU.
 
 **GUI Method:**
-ADUC → right click OU → New → User → fill in name, username, password →
-check "User must change password at next logon"
+ADUC → right click GuestCharacters OU → New → User → fill in details →
+set temporary password → check "User must change password at next logon"
 
 **PowerShell Method:**
 ```powershell
 New-ADUser `
-  -Name "John Smith" `
-  -GivenName "John" `
-  -Surname "Smith" `
-  -SamAccountName "jsmith" `
-  -UserPrincipalName "jsmith@lab.local" `
-  -Path "OU=Employees,DC=lab,DC=local" `
-  -AccountPassword (ConvertTo-SecureString "TempPass123!" -AsPlainText -Force) `
+  -Name "Mel Bushman" `
+  -GivenName "Mel" `
+  -Surname "Bushman" `
+  -SamAccountName "mbushman" `
+  -UserPrincipalName "mbushman@lab.local" `
+  -Path "OU=GuestCharacters,OU=GoldenGirls,DC=lab,DC=local" `
+  -AccountPassword (ConvertTo-SecureString "Welcome123!" -AsPlainText -Force) `
   -ChangePasswordAtLogon $true `
-  -Enabled $true
+  -Enabled $true `
+  -Description "Dorothy's boyfriend"
+
+# Add to appropriate groups
+Add-ADGroupMember -Identity "GuestCharacters" -Members mbushman
 ```
 
 ![New User Created GUI](05-onboarding-offboarding/screenshots/01-new-user-gui.png)
@@ -228,35 +249,42 @@ New-ADUser `
 
 ---
 
-### Offboarding — Disable and Archive User
+### Offboarding — Charlie Nylund
 
-Rather than immediately deleting the account, the user was disabled and moved
-to a Disabled Users OU — the standard secure offboarding practice in enterprise
-environments that preserves the account for auditing purposes.
+**Scenario:** IT is conducting an account audit and discovers Charlie Nylund's
+account was never properly offboarded. Charlie passed away before the show began
+— Rose frequently mentions him. His account is disabled, removed from all groups,
+and moved to the DisabledAccounts OU for auditing purposes rather than being
+deleted immediately — which is standard enterprise security practice.
 
 **GUI Method:**
-ADUC → find user → right click → Disable Account → right click → Move →
-select Disabled Users OU
+ADUC → find Charlie Nylund → right click → Disable Account →
+right click → Move → select DisabledAccounts OU
 
 **PowerShell Method:**
 ```powershell
 # Disable the account
-Disable-ADAccount -Identity "jsmith"
+Disable-ADAccount -Identity cnylund
 
 # Remove from all groups except Domain Users
-Get-ADUser -Identity "jsmith" -Properties MemberOf |
+Get-ADUser -Identity cnylund -Properties MemberOf |
   Select-Object -ExpandProperty MemberOf |
-  ForEach-Object { Remove-ADGroupMember -Identity $_ -Members "jsmith" -Confirm:$false }
+  ForEach-Object { Remove-ADGroupMember -Identity $_ -Members cnylund -Confirm:$false }
 
-# Move to Disabled Users OU
+# Move to DisabledAccounts OU
 Move-ADObject `
-  -Identity "CN=John Smith,OU=Employees,DC=lab,DC=local" `
-  -TargetPath "OU=Disabled Users,DC=lab,DC=local"
+  -Identity "CN=Charlie Nylund,OU=Family,OU=GoldenGirls,DC=lab,DC=local" `
+  -TargetPath "OU=DisabledAccounts,OU=GoldenGirls,DC=lab,DC=local"
+
+# Verify account is disabled
+Get-ADUser -Identity cnylund `
+  -Properties Enabled, DistinguishedName |
+  Select Name, Enabled, DistinguishedName
 ```
 
 ![Offboarding Disabled GUI](05-onboarding-offboarding/screenshots/03-offboarding-disabled-gui.png)
 ![Offboarding PowerShell](05-onboarding-offboarding/screenshots/04-offboarding-powershell.png)
-![User in Disabled OU](05-onboarding-offboarding/screenshots/05-user-in-disabled-ou.png)
+![Charlie Nylund in DisabledAccounts OU](05-onboarding-offboarding/screenshots/05-user-in-disabled-ou.png)
 
 ---
 
